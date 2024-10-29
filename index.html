@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Student ChatBot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://static-images.vnncdn.net/vps_images_publish/000001/000003/2024/7/29/fpt-5-2146.jpg?width=0&s=JiivhJT1JIXEeBb30egiZg'); /* Đường dẫn đến file ảnh */
+            background-size: cover; /* Ảnh sẽ bao phủ toàn bộ màn hình */
+            background-position: center; /* Đặt vị trí hình ảnh ở giữa */
+            background-repeat: no-repeat; /* Không lặp lại hình ảnh */
+            background-attachment: fixed; /* Giữ hình ảnh cố định khi cuộn trang */
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(255, 165, 0);
+            margin-top: 20px;
+        }
+        p {
+            text-align: center;
+            color: rgb(255, 165, 0);
+            font-size: 1.2em;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        /* Styling for the form container */
+        .form-container {
+            width: 45%;
+            background-color: rgb(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgb(255, 255, 255, 0.5);
+            border-left: 5px solid #3498db;/*xanh dương*/
+            max-width: 400px;
+            margin: 20px auto; /* Căn giữa theo chiều ngang */
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        input:focus {
+            outline: none;
+            border: 1px solid #27ae60;
+        }
+        button {
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #d35400;
+        }
+        /* Styling for student table */
+        .student-table-container {
+            width: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.5);
+            border-left: 5px solid #27ae60;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #e67e22;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .add-button {
+            background-color: #3498db;
+        }
+        .delete-button {
+            background-color: #e74c3c;
+        }
+        .update-button {
+            background-color: #27ae60;
+        }
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .form-container, .student-table-container {
+                width: 90%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to University Student ChatBot</h1>
+    <div class="container">
+        <!-- Form section -->
+        <div class="form-container">
+            <!-- Form to add a student -->
+            <form method="POST">
+                <h3>Add Student</h3>
+                <input type="text" name="name" placeholder="Student Name" required>
+                <input type="date" name="birth_date" placeholder="Date of Birth" required>
+                <input type="text" name="student_id" placeholder="Student ID" required>
+                <input type="text" name="major" placeholder="Major" required>
+                <button type="submit" name="add" class="add-button">Add Student Information</button>
+            </form>
+
+            <!-- Form to delete a student -->
+            <form method="POST">
+                <h3>Delete Student</h3>
+                <input type="text" name="student_id" placeholder="Student ID" required>
+                <button type="submit" name="delete" class="delete-button">Delete Student Information</button>
+            </form>
+
+            <!-- Form to update a student -->
+            <form method="POST">
+                <h3>Update Student Information</h3>
+                <input type="text" name="student_id" placeholder="Student ID" required>
+                <input type="text" name="name" placeholder="New Student Name">
+                <input type="date" name="birth_date" placeholder="New Date of Birth">
+                <input type="text" name="major" placeholder="New Major">
+                <button type="submit" name="update" class="update-button">Update Student</button>
+            </form>
+        </div>
+        
+        <!-- Student table section -->
+        <div class="student-table-container">
+            <h3>Student List</h3>
+            <table>
+                <tr>
+                    {% for col in students.columns %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in students.iterrows() %}
+                <tr>
+                    {% for col in students.columns %}
+                    <td>{{ row[1][col] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <!-- Kommunicate chatbot integration -->
+    <div class="chatbot">
+        <script type="text/javascript">
+            (function(d, m){
+                var kommunicateSettings = {"appId":"7f04a1b1998749ea509c23583d549bac","popupWidget":true,"automaticChatOpenOnNavigation":true};
+                var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
+                s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+                var h = document.getElementsByTagName("head")[0]; h.appendChild(s); 
+                window.kommunicate = m; m._globals = kommunicateSettings;
+            })(document, window.kommunicate || {});
+        </script>
+    </div>
+</body>
+</html>
